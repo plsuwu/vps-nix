@@ -11,4 +11,24 @@ in
     violet
     sapphire
   ];
+  "piss-fan-client-env.age".publicKeys = [
+    violet
+    sapphire
+  ];
+  "piss-fan-server-env.age".publicKeys = [
+    violet
+    sapphire
+  ];
+  "grafana.age".publicKeys = [
+    violet
+    sapphire
+  ];
+  "gcp-bucket.age".publicKeys = [
+    violet
+    sapphire
+  ];
+  "gcp-service.age".publicKeys = [
+    violet
+    sapphire
+  ];
 }

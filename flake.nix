@@ -3,8 +3,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     deploy-rs.url = "github:serokell/deploy-rs";
     agenix.url = "github:ryantm/agenix";
-
-    # piss-fan.url = "git+file:///home/please/src/pea-fan";
+    piss-fan.url = "git+file:///home/please/src/pea-fan";
   };
 
   outputs =
@@ -13,7 +12,7 @@
       nixpkgs,
       agenix,
       deploy-rs,
-      # piss-fan,
+      piss-fan,
       ...
     }:
     let
@@ -24,6 +23,7 @@
       nixosConfigurations = {
         sapphire = nixpkgs.lib.nixosSystem {
           inherit system;
+          specialArgs = { inherit piss-fan system; };
           modules = [
             ./hosts/sapphire/configuration.nix
             agenix.nixosModules.default
@@ -50,6 +50,8 @@
         packages = [
           deploy-rs.packages.${system}.default
           agenix.packages.${system}.default
+          # piss-fan.packages.${system}.default
+          # piss-fan.packages.${system}.client
 
           pkgs.age
           pkgs.ssh-to-age
@@ -58,7 +60,7 @@
             HOST_ADDR=$(age --decrypt -i ~/.ssh/id_ed25519 ./secrets/sapphire-ip.age)
             ${
               deploy-rs.packages.${system}.default
-            }/bin/deploy ".#sapphire" --hostname "$HOST_ADDR" "$@"
+            }/bin/deploy ".#sapphire" --hostname "$HOST_ADDR" "$@" -- --impure
           '')
         ];
       };

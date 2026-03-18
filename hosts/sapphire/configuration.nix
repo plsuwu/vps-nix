@@ -10,31 +10,123 @@
     lib.optional (builtins.pathExists ./do-userdata.nix) ./do-userdata.nix
     ++ [
       (modulesPath + "/virtualisation/digital-ocean-config.nix")
-      ../../modules/postgres
+      ../../modules
     ];
 
   networking.hostName = "sapphire";
+  time.timeZone = "Australia/Brisbane";
 
-  services.do-postgres = {
-    enable = true;
-    databases = [ "peafan" ];
-  };
+  age.secrets = {
+    server-env = {
+      file = ../../secrets/piss-fan-server-env.age;
+    };
+    client-env = {
+      file = ../../secrets/piss-fan-client-env.age;
+    };
 
-  networking.firewall.allowedTCPPorts = [
-    22
-    80
-    443
-  ];
-  services.openssh = {
-    enable = true;
-    settings = {
-      PermitRootLogin = "prohibit-password";
-      PasswordAuthentication = false;
+    grafana = {
+      file = ../../secrets/grafana.age;
+      owner = "grafana";
+      mode = "0400";
     };
   };
 
-  system.stateVersion = "25.11";
+  
 
+  services =
+    let
+      ageFiles = config.age.secrets;
+    in
+    {
+      piss-fan = {
+        # front end
+        client = {
+          enable = true;
+          port = 3002;
+          environmentFile = ageFiles.client-env.path;
+        };
+
+        # api
+        server = {
+          enable = true;
+          environmentFile = ageFiles.server-env.path;
+        };
+      };
+
+      telemetry = {
+        alloy.enable = true;
+        prometheus.enable = true;
+
+        tempo = {
+          enable = true;
+          bucketName = ../../secrets/gcp-bucket.age;
+          serviceCredential = ../../secrets/gcp-service.age;
+        };
+
+        loki = {
+          enable = true;
+          bucketName = ../../secrets/gcp-bucket.age;
+          serviceCredential = ../../secrets/gcp-service.age;
+        };
+
+        grafana = {
+          enable = true;
+          environmentFile = ageFiles.grafana.path;
+        };
+      };
+
+      do-postgres = {
+        enable = true;
+        databases = [ "pissfan" ];
+      };
+
+      do-nginx.enable = true;
+      do-redis.enable = true;
+
+      openssh = {
+        enable = true;
+        settings = {
+          PermitRootLogin = "prohibit-password";
+          PasswordAuthentication = false;
+        };
+      };
+
+      fail2ban = {
+        enable = true;
+        maxretry = 3;
+        bantime = "1h";
+        bantime-increment.enable = true;
+      };
+    };
+
+  environment.systemPackages = with pkgs; [
+    git
+    neovim
+    htop
+
+    sqlx-cli
+  ];
+
+  networking.firewall = {
+    allowedTCPPorts = [
+      22
+      80
+      443
+    ];
+
+    allowedUDPPorts = [ ];
+    rejectPackets = false;
+    logRefusedConnections = false;
+  };
+
+  networking.enableIPv6 = false;
+
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
+
+  system.stateVersion = "25.11";
   swapDevices = [
     {
       device = "/swapfile";
