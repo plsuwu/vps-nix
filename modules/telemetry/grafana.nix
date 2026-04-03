@@ -28,12 +28,11 @@ in
         server = {
           http_addr = "0.0.0.0";
           http_port = 3000;
-          domain = "grafana.rat.moe";
-          root_url = "https://grafana.rat.moe/";
+          domain = "grafana.piss.fan";
+          root_url = "https://grafana.piss.fan/";
           serve_from_sub_path = false;
         };
         security = {
-          # admin_user = cfg.admin_user;
           admin_password = "$__file{${toString cfg.environmentFile}}";
         };
       };

@@ -48,8 +48,8 @@ in
         '';
 
       virtualHosts = {
-        "rat.moe" = {
-          serverName = "rat.moe";
+        "piss.fan" = {
+          serverName = "piss.fan";
           listen = [
             {
               addr = "0.0.0.0";
@@ -65,8 +65,8 @@ in
           };
         };
 
-        "api.rat.moe" = {
-          serverName = "api.rat.moe";
+        "api.piss.fan" = {
+          serverName = "api.piss.fan";
           listen = [
             {
               addr = "0.0.0.0";
@@ -83,8 +83,8 @@ in
 
         };
 
-        "grafana.rat.moe" = {
-          serverName = "grafana.rat.moe";
+        "grafana.piss.fan" = {
+          serverName = "grafana.piss.fan";
           listen = [
             {
               addr = "0.0.0.0";
@@ -100,12 +100,12 @@ in
           };
         };
 
-        "*.rat.moe" = {
-          serverName = "*.rat.moe";
+        "*.piss.fan" = {
+          serverName = "*.piss.fan";
 
           extraConfig = ''
             set $subdomain "";
-            if ($host ~* ^([^\.]+)\.rat\.moe$) {
+            if ($host ~* ^([^\.]+)\.piss\.fan$) {
               set $subdomain $1;
             }
           '';
@@ -140,9 +140,8 @@ in
               extraParameters = [ "default_server" ];
             }
           ];
+          serverName = "_";
           extraConfig = ''
-            server_name _;
-
             ssl_certificate /var/lib/snakeoil/snakeoil.crt;
             ssl_certificate_key /var/lib/snakeoil/snakeoil.key;
 
