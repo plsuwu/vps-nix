@@ -105,6 +105,7 @@
     htop
 
     sqlx-cli
+    openssl
   ];
 
   networking.firewall = {

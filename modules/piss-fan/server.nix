@@ -24,48 +24,48 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    systemd.services.pg-run-migrations = {
-      description = "run sqlx database migrations";
-      after = [
-        "postgresql.service"
-        "pg-setpass.service"
-      ];
-      requires = [
-        "postgresql.service"
-        "pg-setpass.service"
-      ];
-      wantedBy = [ "multi-user.target" ];
-
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        User = "postgres";
-        EnvironmentFile = cfg.environmentFile;
-
-        ProtectHome = true;
-        ProtectSystem = "strict";
-        PrivateTmp = true;
-        NoNewPrivileges = true;
-      };
-
-      script = ''
-        for i in $(seq 1 30); do
-          ${pkgs.postgresql}/bin/pg_isready -q && break
-          sleep 1
-        done
-
-        DB_NAME="pissfan"
-        if ${pkgs.postgresql}/bin/psql -tAc \
-          "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'" > /dev/null; then
-          echo "db exists"
-        else 
-          ${pkgs.postgresql}/bin/createdb "$DB_NAME"
-          echo "db created"
-        fi
-
-        ${pkgs.sqlx-cli}/bin/sqlx migrate run --source ${cfg.package}/lib/migrations
-      '';
-    };
+    # systemd.services.pg-run-migrations = {
+    #   description = "run sqlx database migrations";
+    #   after = [
+    #     "postgresql.service"
+    #     "pg-setpass.service"
+    #   ];
+    #   requires = [
+    #     "postgresql.service"
+    #     "pg-setpass.service"
+    #   ];
+    #   wantedBy = [ "multi-user.target" ];
+    #
+    #   serviceConfig = {
+    #     Type = "oneshot";
+    #     RemainAfterExit = true;
+    #     User = "postgres";
+    #     EnvironmentFile = cfg.environmentFile;
+    #
+    #     ProtectHome = true;
+    #     ProtectSystem = "strict";
+    #     PrivateTmp = true;
+    #     NoNewPrivileges = true;
+    #   };
+    #
+    #   script = ''
+    #     for i in $(seq 1 30); do
+    #       ${pkgs.postgresql}/bin/pg_isready -q && break
+    #       sleep 1
+    #     done
+    #
+    #     DB_NAME="pissfan"
+    #     if ${pkgs.postgresql}/bin/psql -tAc \
+    #       "SELECT 1 FROM pg_database WHERE datname='$DB_NAME'" > /dev/null; then
+    #       echo "db exists"
+    #     else 
+    #       ${pkgs.postgresql}/bin/createdb "$DB_NAME"
+    #       echo "db created"
+    #     fi
+    #
+    #     ${pkgs.sqlx-cli}/bin/sqlx migrate run --source ${cfg.package}/lib/migrations
+    #   '';
+    # };
 
     systemd.services.piss-fan-server = {
       description = "pissfan irc processing/api backend service";

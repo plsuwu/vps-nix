@@ -125,6 +125,30 @@ in
             '';
           };
         };
+
+        "_" = {
+          listen = [
+            {
+              addr = "0.0.0.0";
+              port = 80;
+              extraParameters = [ "default_server" ];
+            }
+            {
+              addr = "0.0.0.0";
+              port = 443;
+              ssl = true;
+              extraParameters = [ "default_server" ];
+            }
+          ];
+          extraConfig = ''
+            server_name _;
+
+            ssl_certificate /var/lib/snakeoil/snakeoil.crt;
+            ssl_certificate_key /var/lib/snakeoil/snakeoil.key;
+
+            return 444;
+          '';
+        };
       };
     };
   };
