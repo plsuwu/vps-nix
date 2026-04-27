@@ -13,6 +13,7 @@
 
     ./piss-fan/client.nix
     ./piss-fan/server.nix
+    ./plsuwu
   ];
 
   environment.systemPackages = [

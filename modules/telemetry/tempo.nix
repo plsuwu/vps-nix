@@ -50,9 +50,9 @@ in
     };
 
     systemd.services.tempo = {
-      
+
       serviceConfig = {
-        
+
         EnvironmentFile = [ config.age.secrets.gcp-storage-tempo.path ];
         Environment = [
           "GOOGLE_APPLICATION_CREDENTIALS=${config.age.secrets.gcp-credential-tempo.path}"
@@ -65,9 +65,16 @@ in
       extraFlags = [ "-config.expand-env=true" ];
 
       settings = {
-        distributor.receivers.otlp.protocols = {
-          grpc.endpoint = "0.0.0.0:4320";
-          http.endpoint = "0.0.0.0:4321";
+        distributor = {
+          receivers.otlp.protocols = {
+            grpc.endpoint = "0.0.0.0:4320";
+            http.endpoint = "0.0.0.0:4321";
+          };
+
+          # log_discarded_spans = {
+          #   enabled = true;
+          #   include_all_attributes = true;
+          # };
         };
 
         ingester.max_block_duration = "5m";

@@ -31,8 +31,6 @@
     };
   };
 
-  
-
   services =
     let
       ageFiles = config.age.secrets;
@@ -52,6 +50,8 @@
           environmentFile = ageFiles.server-env.path;
         };
       };
+
+      plsuwu.enable = true;
 
       telemetry = {
         alloy.enable = true;
@@ -100,6 +100,8 @@
     };
 
   environment.systemPackages = with pkgs; [
+    btrfs-progs
+
     git
     neovim
     htop
@@ -128,6 +130,17 @@
   ];
 
   system.stateVersion = "25.11";
+
+  # fileSystems."/volume" = {
+  #   device = "/dev/disk/by-uuid/bfee169a-74ae-4263-8157-00d7f1b718dc";
+  #   fsType = "btrfs";
+  #
+  #   options = [
+  #     "compress=zstd"
+  #     "noatime"
+  #   ];
+  # };
+
   swapDevices = [
     {
       device = "/swapfile";

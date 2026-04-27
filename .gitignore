@@ -2,3 +2,5 @@
 mkSSHKey.sh
 
 piss-fan-13e521*.json
+*.sql
+*.log

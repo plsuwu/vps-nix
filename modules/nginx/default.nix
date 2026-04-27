@@ -126,6 +126,20 @@ in
           };
         };
 
+        "plsuwu.com" = lib.mkIf config.services.plsuwu.enable {
+          serverName = "plsuwu.com";
+          listen = [
+            {
+              addr = "0.0.0.0";
+              port = 80;
+            }
+          ];
+          locations."/" = {
+            root = "${config.services.plsuwu.root}";
+            index = "index.html";
+          };
+        };
+
         "_" = {
           listen = [
             {
