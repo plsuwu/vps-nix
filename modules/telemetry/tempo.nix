@@ -12,11 +12,6 @@ in
 
     enable = lib.mkEnableOption "grafana tempo";
 
-    configFile = lib.mkOption {
-      type = lib.types.path;
-      default = ./configs/tempo.yaml;
-    };
-
     bucketName = lib.mkOption {
       type = lib.types.path;
       default = ../../secrets/gcp-bucket.age;
@@ -29,9 +24,14 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    users.groups.gcp-users = {
-      members = [ "tempo" ];
+    users.users.tempo = {
+      isSystemUser = true;
+      group = "tempo";
+      home = "/var/lib/tempo";
     };
+
+    users.groups.tempo = { };
+    users.groups.gcp-users.members = [ "tempo" ];
 
     age.secrets = {
       gcp-storage-tempo = {
@@ -50,13 +50,47 @@ in
     };
 
     systemd.services.tempo = {
-
       serviceConfig = {
+        MemoryHigh = "60%";
+        MemoryMax = "75%";
+        MemorySwapMax = 0;
+
+        DynamicUser = lib.mkForce false;
+        User = "tempo";
+        Group = "tempo";
+        SupplementaryGroups = [ "gcp-users" ];
 
         EnvironmentFile = [ config.age.secrets.gcp-storage-tempo.path ];
         Environment = [
           "GOOGLE_APPLICATION_CREDENTIALS=${config.age.secrets.gcp-credential-tempo.path}"
         ];
+
+        ReadWritePaths = [ "/var/lib/tempo" ];
+        ProtectSystem = lib.mkForce "strict";
+        ProtectHome = true;
+        PrivateTmp = true;
+
+        ProtectKernelTunables = true;
+        ProtectKernelModules = true;
+        ProtectKernelLogs = true;
+        ProtectControlGroups = true;
+        ProtectClock = true;
+
+        RestrictNamespaces = true;
+        RestrictRealtime = true;
+        RestrictSUIDSGID = true;
+
+        LockPersonality = true;
+        MemoryDenyWriteExecute = true;
+        SystemCallArchitectures = "native";
+        SystemCallFilter = [
+          "@system-service"
+          "~@privileged"
+          "~@resources"
+        ];
+        CapabilityBoundingSet = "";
+        AmbientCapabilities = "";
+        NoNewPrivileges = true;
       };
     };
 
@@ -67,8 +101,8 @@ in
       settings = {
         distributor = {
           receivers.otlp.protocols = {
-            grpc.endpoint = "0.0.0.0:4320";
-            http.endpoint = "0.0.0.0:4321";
+            grpc.endpoint = "127.0.0.1:4320";
+            http.endpoint = "127.0.0.1:4321";
           };
 
           # log_discarded_spans = {

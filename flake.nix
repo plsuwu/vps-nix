@@ -3,7 +3,9 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     deploy-rs.url = "github:serokell/deploy-rs";
     agenix.url = "github:ryantm/agenix";
+
     piss-fan.url = "git+file:///home/please/src/pea-fan";
+    # piss-fan.url = "github:plsuwu/pea-fan";
   };
 
   outputs =
