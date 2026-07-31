@@ -5,7 +5,7 @@
     agenix.url = "github:ryantm/agenix";
 
     piss-fan.url = "git+file:///home/please/src/pea-fan";
-    # piss-fan.url = "github:plsuwu/pea-fan";
+    plsuwu.url = "git+file:///home/please/src/plsuwu";
   };
 
   outputs =
@@ -15,6 +15,7 @@
       agenix,
       deploy-rs,
       piss-fan,
+      plsuwu,
       ...
     }:
     let
@@ -30,7 +31,7 @@
         sapphire = nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = {
-            inherit piss-fan system;
+            inherit piss-fan system plsuwu;
           };
           modules = [
             { nixpkgs.overlays = overlays; }
@@ -56,6 +57,9 @@
       ) deploy-rs.lib;
 
       devShells.${system}.default = pkgs.mkShell {
+        buildInputs = [
+          pkgs.jq
+        ];
         packages = [
           deploy-rs.packages.${system}.default
           agenix.packages.${system}.default

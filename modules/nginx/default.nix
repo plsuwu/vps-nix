@@ -17,10 +17,7 @@ in
       enable = true;
       logError = "/var/log/nginx/error.log info";
 
-      # recommendedOptimisation = true;
       recommendedGzipSettings = true;
-      # recommendedProxySettings = true;
-      # recommendedTlsSettings = true;
 
       commonHttpConfig =
         let
@@ -120,13 +117,12 @@ in
             proxyWebsockets = true;
             extraConfig = ''
               proxy_set_header Host $host;
-
               proxy_set_header X-Subdomain $subdomain;
             '';
           };
         };
 
-        "plsuwu.com" = lib.mkIf config.services.plsuwu.enable {
+        "plsuwu.com" = {
           serverName = "plsuwu.com";
           listen = [
             {
@@ -135,8 +131,11 @@ in
             }
           ];
           locations."/" = {
-            root = "${config.services.plsuwu.root}";
-            index = "index.html";
+            proxyPass = "http://localhost:4321";
+            proxyWebsockets = true;
+            extraConfig = ''
+              proxy_set_header Host $host;
+            '';
           };
         };
 
