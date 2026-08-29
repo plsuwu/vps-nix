@@ -130,12 +130,20 @@ in
               port = 80;
             }
           ];
-          locations."/" = {
-            proxyPass = "http://localhost:4321";
-            proxyWebsockets = true;
-            extraConfig = ''
-              proxy_set_header Host $host;
-            '';
+          locations = {
+            "/_astro/" = {
+              root = "${config.services.plsuwu.root}";
+              extraConfig = ''
+                add_header Cache-Control "public, max-age=31536000, immutable" always;
+              '';
+            };
+            "/" = {
+              root = "${config.services.plsuwu.root}";
+              tryFiles = "$uri $uri/index.html $uri.html =404";
+              extraConfig = ''
+                add_header Cache-Control "public, max-age=0, must-revalidate" always;
+              '';
+            };
           };
         };
 

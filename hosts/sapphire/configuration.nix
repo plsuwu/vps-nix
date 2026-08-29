@@ -51,7 +51,7 @@
         };
       };
 
-      plsuwu.enable = true;
+      # plsuwu.enable = false;
 
       telemetry = {
         alloy.enable = true;
