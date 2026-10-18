@@ -63,6 +63,7 @@
       devShells.${system}.default = pkgs.mkShell {
         buildInputs = [
           pkgs.jq
+          pkgs.google-cloud-sdk
         ];
         packages = [
           deploy-rs.packages.${system}.default
@@ -72,7 +73,7 @@
 
           pkgs.age
           pkgs.ssh-to-age
-          (pkgs.writeShellScriptBin "deploy-to" ''
+          (pkgs.writeShellScriptBin "run-deploy" ''
             set -euo pipefail
             HOST_ADDR=$(age --decrypt -i ~/.ssh/id_ed25519 ./secrets/sapphire-ip.age)
             ${

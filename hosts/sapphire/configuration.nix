@@ -24,6 +24,17 @@
       file = ../../secrets/piss-fan-client-env.age;
     };
 
+    backup-bucket = {
+      file = ../../secrets/gcp-backup-bucket.age;
+      owner = "postgres";
+      mode = "0400";
+    };
+    backup-service = {
+      file = ../../secrets/gcp-backup-service.age;
+      owner = "postgres";
+      mode = "0400";
+    };
+
     grafana = {
       file = ../../secrets/grafana.age;
       owner = "grafana";
@@ -51,8 +62,6 @@
         };
       };
 
-      # plsuwu.enable = false;
-
       telemetry = {
         alloy.enable = true;
         prometheus.enable = true;
@@ -72,6 +81,12 @@
         grafana = {
           enable = true;
           environmentFile = ageFiles.grafana.path;
+        };
+      };
+
+      timers = {
+        backup = {
+          enable = true;
         };
       };
 

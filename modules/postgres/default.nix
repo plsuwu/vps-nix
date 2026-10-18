@@ -10,6 +10,12 @@ in
 {
   options.services.do-postgres = {
     enable = lib.mkEnableOption "postgresql service";
+
+    package = lib.mkOption {
+      type = lib.types.package;
+      default = pkgs.postgresql_17;
+      description = "postgresql package";
+    };
     databases = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
@@ -42,8 +48,9 @@ in
 
     services.postgresql = {
       enable = true;
-      package = pkgs.postgresql_17;
-      enableTCPIP = false; # use UNIX socket only
+      package = cfg.package;
+
+      enableTCPIP = false; # UNIX socket only
       settings = {
         log_connections = true;
         log_disconnections = true;

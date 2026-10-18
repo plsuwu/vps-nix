@@ -3,6 +3,14 @@ let
   sapphire = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEwQP+xNQifDOswAl8O5JtBOl8e6/OjPvaCOcKWwJHmV root@nixos";
 in
 {
+  "gcp-backup-bucket.age".publicKeys = [
+    violet
+    sapphire
+  ];
+  "gcp-backup-service.age".publicKeys = [
+    violet
+    sapphire
+  ];
   "pg-pass.age".publicKeys = [
     violet
     sapphire

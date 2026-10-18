@@ -2,6 +2,8 @@
 mkSSHKey.sh
 mkDbBkacup.sh
 
+pg_backups
+
 piss-fan-13e521*.json
 *.sql
 *.log
